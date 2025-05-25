@@ -52,10 +52,10 @@ public:
   std::string get_id() const override;
 
   task_batch_debounce_pool<Content, Embedding> task_pool{
-      std::chrono::milliseconds(1500),
+      std::chrono::milliseconds(1000),
       [this](std::vector<Content> contents)
           -> async_simple::coro::Lazy<std::vector<Embedding>> {
-        ELOGFMT(DEBUG, "Running batch embedding task with {} contents: {}",
+        ELOGFMT(INFO, "Running batch embedding task with {} contents: {}",
                 contents.size(), contents);
         auto contents_size = contents.size();
         std::vector<Embedding> res;
@@ -123,6 +123,9 @@ public:
       }
       co_return embedding;
     } else if (!contents.text.empty()) {
+      ELOGFMT(INFO,
+              "Enqueuing text content for embedding: {}, queueued size: {}",
+              contents.text, task_pool.tasks.size());
       auto res = co_await task_pool.add_task(std::move(contents));
       if (res.empty()) {
         ELOGFMT(ERROR, "Failed to generate embedding for content: {}",

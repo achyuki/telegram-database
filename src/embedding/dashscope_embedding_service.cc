@@ -77,8 +77,8 @@ tgdb::DashScopeEmbeddingService::multimodal_embedding_batch(
 retry:
   auto json_request = rfl::json::write(request);
   coro_http::coro_http_client client;
-  client.set_conn_timeout(std::chrono::seconds(10));
-  client.set_req_timeout(std::chrono::seconds(50));
+  client.set_conn_timeout(std::chrono::seconds(5));
+  client.set_req_timeout(std::chrono::seconds(10));
 
   client.set_proxy("localhost", "9000");
 
